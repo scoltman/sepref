@@ -1,0 +1,10 @@
+{
+  "name": "sepref",
+  "version": "0.2.0",
+  "devDependencies": {
+    "event-stream": "^3.3.4",
+    "jquery": "^3.1.0",
+    "jsdom": "^9.5.0",
+    "request": "^2.74.0"
+  }
+}
