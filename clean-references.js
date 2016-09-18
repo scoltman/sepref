@@ -7,6 +7,9 @@ var lineCount = 0;
 var authorCn = 0;
 var currentAuthor = '';
 var validLine;
+
+fs.unlinkSync('data/references-clean.txt');
+
 var s = fs.createReadStream('data/references-raw.txt')
     .pipe(es.split())
     .pipe(es.mapSync(function(line){
