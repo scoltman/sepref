@@ -8,21 +8,23 @@ var authorCn = 0;
 var currentAuthor = '';
 var validLine;
 
-var refdata = [];
-
+var reflist = {};
 var s = fs.createReadStream('data/references-clean.txt')
     .pipe(es.split())
     .pipe(es.mapSync(function(line){
 
-        // pause the readstream
         s.pause();
         validLine = false;
         lineCount += 1;
+
         if(line){
-          if(refdata.indexOf(line) != -1){
-            // TODO need to count where the reference has been mentioned more than once
+          if(!reflist[line]){
+              reflist[line] = {
+                count : 1
+              }
+          } else {
+            reflist[line].count++;
           }
-          refdata.push(line);
         }
         s.resume();
     })
@@ -31,13 +33,24 @@ var s = fs.createReadStream('data/references-clean.txt')
         console.log(e);
     })
     .on('end', function(){
-        console.log('Read entire file.')
-        console.log('Number of lines: ' + lineCount)
+        var top100 = [];
+        for (var p in reflist) {
+            if (reflist.hasOwnProperty(p)) {
+                top100.push({paper: p, count: reflist[p].count });
+            }
+        }
+        top100.sort(function(a, b) {
+            return parseFloat(b.count) - parseFloat(a.count);
+        });
+        top100 = top100.slice(0,20);
 
-        fs.writeFile('data/reference-stats.json', JSON.stringify(refdata), function(err) {
+        fs.writeFile('data/reference-stats.json', JSON.stringify(top100), function(err) {
             if(err) {
                 return console.log(err);
-            }
+            } else {
+
+            console.log('Save stats to file.');
+          }
         });
     })
 );

@@ -8,6 +8,11 @@ var authorCn = 0;
 var currentAuthor = '';
 var validLine;
 
+var ignoreThese = [
+  'Novalis, Logological Fragments',
+  'Loeb edition with Englishtranslation'
+];
+
 fs.unlinkSync('data/references-clean.txt');
 
 var s = fs.createReadStream('data/references-raw.txt')
@@ -39,6 +44,30 @@ var s = fs.createReadStream('data/references-raw.txt')
 
           }
 
+          // there seems to be some missing spaces between words, this should get some of them.
+          line = line.replace(/([a-z])([A-Z])/, '$1 $2');
+          line = line.replace(/([A-zÀ-ÿ]),([A-zÀ-ÿ])/i, '$1, $2');
+          line = line.replace(/([A-zÀ-ÿ]):([A-zÀ-ÿ])/i, '$1: $2');
+          line = line.replace(/([A-zÀ-ÿ])\.([A-zÀ-ÿ])/i, '$1. $2');
+          line = line.replace(/[0-9]{2,}–[0-9]{2,}\./, '');
+          line = line.replace(/, [0-9]{2,3}:/, '');
+          line = line.replace('pp. ', '');
+          line = line.replace(/([0-9]{4})[a-z]{1}/, '$1');
+          line = line.replace('Rawls, John,', 'Rawls, J.,');
+          line = line.replace('Oxford: Basil Blackwell.', 'Oxford: Blackwell.');
+          line = line.replace('Lewis, David,', 'Lewis, D.,');
+          line = line.replace('Nozick, Robert,', 'Nozick, R.,');
+          line = line.replace('Kripke, Saul,', 'Kripke, S.,');
+          line = line.replace('Stevenson, Charles,', 'Stevenson, C.,');
+          line = line.replace('Steiner, Hillel,', 'Steiner, H.,');
+          line = line.replace('Hawley, Katherine,', 'Hawley, K.,');
+          line = line.replace('Russell, Bertrand,', 'Russell, B.,');
+          line = line.replace('Burge, Tyler,', 'Burge, T.,');
+          line = line.replace('Dummett, Michael,', 'Dummett, M.,');
+          line = line.replace('Wright, Crispin,', 'Wright, C.,');
+          line = line.replace('Raz, Joseph,', 'Raz, J.,');
+          line = line.replace('Anarchy, State and Utopia,', 'Anarchy, State, and Utopia,');
+          line = line.trim();
           fs.appendFile('data/references-clean.txt', line+'\n', function(err) {
               if(err) {
                   return console.log(err);
@@ -58,10 +87,3 @@ var s = fs.createReadStream('data/references-raw.txt')
         console.log('Number of lines: ' + lineCount)
     })
 );
-
-
-
-var ignoreThese = [
-  'Novalis, Logological Fragments'
-
-]
